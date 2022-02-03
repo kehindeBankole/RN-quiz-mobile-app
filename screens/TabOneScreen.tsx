@@ -1,15 +1,73 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image, Button, TouchableOpacity } from "react-native";
+import Onboarding from "react-native-onboarding-swiper";
+import EditScreenInfo from "../components/EditScreenInfo";
+import { Text, View } from "../components/Themed";
+import { RootTabScreenProps } from "../types";
+import window from "../constants/Layout";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
+export default function TabOneScreen({
+  navigation,
+}: RootTabScreenProps<"TabOne">) {
+  const Square = ({ isLight, selected }: { isLight: any; selected: any }) => {
+    // let backgroundColor;
+    // if (isLight) {
+    //   backgroundColor = selected ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.3)";
+    // } else {
+    //   backgroundColor = selected ? "#fff" : "rgba(255, 255, 255, 0.5)";
+    // }
+    return (
+      <View
+        style={{
+          width: 16,
+          height: 16,
+          marginHorizontal: 3,
+          borderRadius: 100,
+          backgroundColor: selected ? "black" : "white",
+        }}
+      />
+    );
+  };
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <Onboarding
+        DotComponent={Square}
+        pages={[
+          {
+            backgroundColor: "#D8D1EA",
+            image: <Image source={require("../assets/images/Group1.png")} />,
+            title: "Onboarding",
+            subtitle: "Done with React Native Onboarding Swiper",
+          },
+          {
+            backgroundColor: "#D8D1EA",
+            image: <Image source={require("../assets/images/Group4.png")} />,
+            title: "Onboarding",
+            subtitle: "Done with React Native Onboarding Swiper",
+          },
+        ]}
+        transitionAnimationDuration={100}
+        // showNext={false}
+        // showSkip={true}
+        containerStyles={{ position: "relative" }}
+        bottomBarColor="transparent"
+        onSkip={() => navigation.navigate("Second")}
+        onDone={() => navigation.navigate("Second")}
+        // SkipButtonComponent={({ isLight, skipLabel, ...props }) => (
+        //   <TouchableOpacity
+        //     style={{
+        //       backgroundColor: "red",
+        //       marginLeft: 30,
+        //       marginBottom: 50,
+        //       height: 50,
+        //       width: 100,
+        //     }}
+        //     onPress={() => null}
+        //   >
+        //     <Text>{skipLabel}</Text>
+        //   </TouchableOpacity>
+        // )}
+      />
     </View>
   );
 }
@@ -17,16 +75,5 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
 });
