@@ -37,13 +37,13 @@ export default function TabOneScreen({
             backgroundColor: "#D8D1EA",
             image: <Image source={require("../assets/images/Group1.png")} />,
             title: "Onboarding",
-            subtitle: "Done with React Native Onboarding Swiper",
+            subtitle: "playful quiz app",
           },
           {
             backgroundColor: "#D8D1EA",
             image: <Image source={require("../assets/images/Group4.png")} />,
             title: "Onboarding",
-            subtitle: "Done with React Native Onboarding Swiper",
+            subtitle: "play play play",
           },
         ]}
         transitionAnimationDuration={100}
