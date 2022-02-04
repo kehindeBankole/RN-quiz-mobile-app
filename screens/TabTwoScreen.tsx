@@ -11,14 +11,17 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
-export default function TabTwoScreen() {
+export default function TabTwoScreen({ navigation }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>([]);
-  const [current, setCurrent] = useState<any>([]);
+  const [current, setCurrent] = useState<any>(0);
+  const [a, seta] = useState<any>(null);
+  const [done, setdone] = useState(false);
+  const [score, setscore] = useState(0);
   useEffect(() => {
     setLoading(true);
-    fetch(`https://opentdb.com/api.php?amount=10`, {
+    fetch(`https://opentdb.com/api.php?amount=5&type=multiple`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -33,6 +36,7 @@ export default function TabTwoScreen() {
       .catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {});
   if (loading === true)
     return (
       <View
@@ -46,76 +50,104 @@ export default function TabTwoScreen() {
     );
   return (
     <View style={styles.container}>
+      {done === true && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+            backgroundColor: "red",
+            zIndex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text>{score}</Text>
+        </View>
+      )}
       {data && (
-        <FlatList
-          horizontal={true}
-          data={data?.results}
-          initialNumToRender={1}
-          renderItem={({ item }) => (
-            <View>
-              <View style={styles.titleCard}>
+        <>
+          <View style={styles.titleCard}>
+            <Text
+              style={{
+                fontFamily: "mercado",
+                fontSize: 25,
+                lineHeight: 40,
+                fontWeight: "600",
+              }}
+            >
+              {data?.results[current].question}
+            </Text>
+          </View>
+
+          {[
+            ...data?.results[current].incorrect_answers,
+            data?.results[current].correct_answer,
+          ]
+            .sort((a, b) => 0.5 - Math.random())
+            .map((answer, index) => (
+              <TouchableOpacity
+                style={{
+                  width: Dimensions.get("window").width - 50,
+                  backgroundColor:
+                    data?.results[current].incorrect_answers.includes(a) &&
+                    a === answer
+                      ? "red"
+                      : "#0A3200",
+                  marginTop: 30,
+                  height: 60,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 25,
+                }}
+                onPress={() => {
+                  seta(answer);
+                  data?.results[current].incorrect_answers.includes(answer)
+                    ? null
+                    : setscore((prev) => prev + 1);
+
+                  current === data?.results.length - 1 && setdone(true);
+                }}
+              >
                 <Text
                   style={{
-                    fontFamily: "mercado",
-                    fontSize: 25,
-                    lineHeight: 40,
-                    fontWeight: "600",
+                    fontFamily: "poppins",
+                    color: "white",
                   }}
                 >
-                  {item.question}
+                  {answer}
                 </Text>
-              </View>
-              {[...item.incorrect_answers, item.correct_answer]
-                .sort((a, b) => 0.5 - 5)
-                .map((answer, index) => (
-                  <TouchableOpacity
-                    style={{
-                      width: Dimensions.get("window").width - 50,
-                      backgroundColor: current.includes(answer + index)
-                        ? "red"
-                        : "#0A3200",
-                      marginTop: 30,
-                      height: 60,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 25,
-                    }}
-                    onPress={() => {
-                      setSelected((prev: any) => [...prev, answer]);
-                      current.push(answer + index);
-                      console.log(index);
-                      // console.log(item);
-                      // console.log(answer);
-                      item.incorrect_answers.includes(answer)
-                        ? console.log("wrong")
-                        : console.log("right");
-                      //  console.log(item.correct_answer);
-                      console.log(current);
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: "poppins",
-                        color: "white",
-                      }}
-                    >
-                      {answer}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              <Button title="click" onPress={() => console.log(current)} />
-            </View>
-          )}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          style={{
-            width: Dimensions.get("window").width,
-            height: "100%",
-            paddingLeft: 25,
-          }}
-          legacyImplementation={false}
-        />
+              </TouchableOpacity>
+            ))}
+
+          <TouchableOpacity
+            style={{
+              marginTop: 50,
+              backgroundColor: "blue",
+              width: Dimensions.get("window").width - 150,
+              height: 60,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 25,
+            }}
+            onPress={() => {
+              current === data?.results?.length - 1
+                ? null
+                : setCurrent(current + 1);
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "poppins",
+                color: "white",
+              }}
+            >
+              Next
+            </Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
@@ -126,6 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     paddingTop: StatusBar?.currentHeight && +50,
+    alignItems: "center",
   },
   titleCard: {
     width: Dimensions.get("window").width - 50,
@@ -136,6 +169,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
-    marginRight: 50,
   },
 });
